@@ -1,45 +1,77 @@
+```jsx
 import { Link } from "react-router-dom";
+import useAuth from "../../../hooks/useAuth";
 
 const Navbar = () => {
-    return (
-        <nav className="bg-white shadow-md">
-            <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                <Link to="/" className="text-2xl font-bold text-blue-600">
-                    ReSell Hub
-                </Link>
+  const { user, logOut } = useAuth();
 
-                <ul className="flex items-center gap-6 font-medium">
-                    <li>
-                        <Link to="/">Home</Link>
-                    </li>
+  const handleLogOut = () => {
+    logOut()
+      .then(() => {})
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-                    <li>
-                        <Link to="/products">Products</Link>
-                    </li>
+  return (
+    <nav className="bg-white shadow-md">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <Link to="/" className="text-2xl font-bold text-blue-600">
+          ReSell Hub
+        </Link>
 
-                    <li>
-                        <Link to="/categories">Categories</Link>
-                    </li>
+        <ul className="flex items-center gap-6 font-medium">
+          <li>
+            <Link to="/">Home</Link>
+          </li>
 
-                    <li>
-                        <Link to="/about">About</Link>
-                    </li>
+          <li>
+            <Link to="/products">Products</Link>
+          </li>
 
-                    <li>
-                        <Link to="/contact">Contact</Link>
-                    </li>
+          <li>
+            <Link to="/categories">Categories</Link>
+          </li>
 
-                    <li>
-                        <Link to="/login">Login</Link>
-                    </li>
+          <li>
+            <Link to="/about">About</Link>
+          </li>
 
-                    <li>
-                        <Link to="/register">Register</Link>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    );
+          <li>
+            <Link to="/contact">Contact</Link>
+          </li>
+
+          {user ? (
+            <>
+              <li>
+                <span>{user.displayName || "User"}</span>
+              </li>
+
+              <li>
+                <button
+                  onClick={handleLogOut}
+                  className="btn btn-sm btn-error"
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Link to="/login">Login</Link>
+              </li>
+
+              <li>
+                <Link to="/register">Register</Link>
+              </li>
+            </>
+          )}
+        </ul>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;
+```
