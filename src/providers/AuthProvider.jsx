@@ -1,4 +1,4 @@
-```jsx
+
 import {
   createContext,
   useEffect,
@@ -76,4 +76,3 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
-```
