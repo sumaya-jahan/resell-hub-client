@@ -1,10 +1,10 @@
-
+jsx
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
 const Register = () => {
-  const { createUser, updateUser } = useAuth();
+  const { createUser, updateUser, googleSignIn } = useAuth();
   const navigate = useNavigate();
 
   const {
@@ -35,6 +35,17 @@ const Register = () => {
       });
   };
 
+  const handleGoogleSignIn = () => {
+    googleSignIn()
+      .then(() => {
+        alert("Google Sign In Successful");
+        navigate("/");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
@@ -48,7 +59,9 @@ const Register = () => {
               type="text"
               placeholder="Name"
               className="input input-bordered w-full"
-              {...register("name", { required: "Name is required" })}
+              {...register("name", {
+                required: "Name is required",
+              })}
             />
             {errors.name && (
               <p className="text-red-500 text-sm mt-1">
@@ -126,7 +139,11 @@ const Register = () => {
           </button>
         </form>
 
-        <button className="btn btn-outline w-full mt-4">
+        <button
+          type="button"
+          onClick={handleGoogleSignIn}
+          className="btn btn-outline w-full mt-4"
+        >
           Continue with Google
         </button>
 
