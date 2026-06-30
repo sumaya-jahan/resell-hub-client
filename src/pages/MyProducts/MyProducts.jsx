@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
@@ -13,6 +14,7 @@ const MyProducts = () => {
             axiosSecure
                 .get(`/my-products/${user.email}`)
                 .then((res) => {
+                    console.log("Products:", res.data);
                     setProducts(res.data);
                 })
                 .catch((error) => {
@@ -102,9 +104,12 @@ const MyProducts = () => {
                                     Delete
                                 </button>
 
-                                <button className="btn btn-warning">
+                                <Link
+                                    to={`/dashboard/updateProduct/${product._id}`}
+                                    className="btn btn-warning"
+                                >
                                     Update
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
