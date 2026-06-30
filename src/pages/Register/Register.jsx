@@ -1,10 +1,12 @@
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Register = () => {
     const { createUser, updateUser, googleSignIn } = useAuth();
     const navigate = useNavigate();
+    const axiosSecure = useAxiosSecure();
 
     const {
         register,
@@ -35,31 +37,20 @@ const Register = () => {
                     last_log_in: new Date(),
                 };
 
-                return fetch("http://localhost:3000/users", {
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    body: JSON.stringify(userInfo),
-                });
+                return axiosSecure.post("/users", userInfo);
             })
-            .then((res) => res.json())
             .then(() => {
-                return fetch("http://localhost:3000/jwt", {
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: data.email,
-                    }),
+                return axiosSecure.post("/jwt", {
+                    email: data.email,
                 });
             })
-            .then((res) => res.json())
-            .then((token) => {
-                console.log(token);
+            .then((res) => {
+                console.log(res.data);
 
-                localStorage.setItem("access-token", token.token);
+                localStorage.setItem(
+                    "access-token",
+                    res.data.token
+                );
 
                 alert("Registration Successful");
                 navigate("/");
@@ -67,7 +58,9 @@ const Register = () => {
             .catch((error) => {
                 alert(error.message);
             });
+
     };
+
     const handleGoogleSignIn = () => {
         googleSignIn()
             .then((result) => {
@@ -82,32 +75,22 @@ const Register = () => {
                     last_log_in: new Date(),
                 };
 
-                return fetch("http://localhost:3000/users", {
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    body: JSON.stringify(userInfo),
-                })
-                    .then((res) => res.json())
+                return axiosSecure
+                    .post("/users", userInfo)
                     .then(() => loggedUser);
             })
             .then((loggedUser) => {
-                return fetch("http://localhost:3000/jwt", {
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: loggedUser.email,
-                    }),
+                return axiosSecure.post("/jwt", {
+                    email: loggedUser.email,
                 });
             })
-            .then((res) => res.json())
-            .then((token) => {
-                console.log(token);
+            .then((res) => {
+                console.log(res.data);
 
-                localStorage.setItem("access-token", token.token);
+                localStorage.setItem(
+                    "access-token",
+                    res.data.token
+                );
 
                 alert("Google Sign In Successful");
                 navigate("/");
@@ -116,7 +99,6 @@ const Register = () => {
                 alert(error.message);
             });
     };
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
@@ -175,7 +157,8 @@ const Register = () => {
                                 required: "Password is required",
                                 minLength: {
                                     value: 6,
-                                    message: "Password must be at least 6 characters",
+                                    message:
+                                        "Password must be at least 6 characters",
                                 },
                             })}
                         />

@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Login = () => {
     const { signIn, googleSignIn } = useAuth();
     const navigate = useNavigate();
+    const axiosSecure = useAxiosSecure();
 
     const {
         register,
@@ -15,33 +17,22 @@ const Login = () => {
     const onSubmit = (data) => {
         signIn(data.email, data.password)
             .then(() => {
-                return fetch("http://localhost:3000/users", {
-                    method: "PATCH",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: data.email,
-                    }),
+                return axiosSecure.patch("/users", {
+                    email: data.email,
                 });
             })
-            .then((res) => res.json())
             .then(() => {
-                return fetch("http://localhost:3000/jwt", {
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: data.email,
-                    }),
+                return axiosSecure.post("/jwt", {
+                    email: data.email,
                 });
             })
-            .then((res) => res.json())
-            .then((token) => {
-                console.log(token);
+            .then((res) => {
+                console.log(res.data);
 
-                localStorage.setItem("access-token", token.token);
+                localStorage.setItem(
+                    "access-token",
+                    res.data.token
+                );
 
                 alert("Login Successful");
                 navigate("/");
@@ -56,34 +47,24 @@ const Login = () => {
             .then((result) => {
                 const loggedUser = result.user;
 
-                return fetch("http://localhost:3000/users", {
-                    method: "PATCH",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
+                return axiosSecure
+                    .patch("/users", {
                         email: loggedUser.email,
-                    }),
-                })
-                    .then((res) => res.json())
+                    })
                     .then(() => loggedUser);
             })
             .then((loggedUser) => {
-                return fetch("http://localhost:3000/jwt", {
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: loggedUser.email,
-                    }),
+                return axiosSecure.post("/jwt", {
+                    email: loggedUser.email,
                 });
             })
-            .then((res) => res.json())
-            .then((token) => {
-                console.log(token);
+            .then((res) => {
+                console.log(res.data);
 
-                localStorage.setItem("access-token", token.token);
+                localStorage.setItem(
+                    "access-token",
+                    res.data.token
+                );
 
                 alert("Google Login Successful");
                 navigate("/");
