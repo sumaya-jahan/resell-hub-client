@@ -1,27 +1,55 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
-const AllProducts = () => {
+const MyProducts = () => {
+    const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
+        if (user?.email) {
+            axiosSecure
+                .get(`/my-products/${user.email}`)
+                .then((res) => {
+                    setProducts(res.data);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, [user, axiosSecure]);
+
+    const handleDelete = (id) => {
+        const proceed = confirm(
+            "Are you sure you want to delete this product?"
+        );
+
+        if (!proceed) return;
+
         axiosSecure
-            .get("/products")
+            .delete(`/products/${id}`)
             .then((res) => {
-                setProducts(res.data);
+                if (res.data.deletedCount > 0) {
+                    alert("Product deleted successfully!");
+
+                    const remainingProducts = products.filter(
+                        (product) => product._id !== id
+                    );
+
+                    setProducts(remainingProducts);
+                }
             })
             .catch((error) => {
                 console.log(error);
             });
-    }, [axiosSecure]);
+    };
 
     return (
         <div className="max-w-7xl mx-auto py-10 px-4">
             <h2 className="text-4xl font-bold text-center mb-10">
-                All Products
+                My Products
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -64,17 +92,19 @@ const AllProducts = () => {
                                 ${product.price}
                             </p>
 
-                            <p className="line-clamp-2">
-                                {product.description}
-                            </p>
-
                             <div className="card-actions justify-end">
-                                <Link
-                                    to={`/products/${product._id}`}
-                                    className="btn btn-primary"
+                                <button
+                                    onClick={() =>
+                                        handleDelete(product._id)
+                                    }
+                                    className="btn btn-error"
                                 >
-                                    View Details
-                                </Link>
+                                    Delete
+                                </button>
+
+                                <button className="btn btn-warning">
+                                    Update
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -84,4 +114,4 @@ const AllProducts = () => {
     );
 };
 
-export default AllProducts;
+export default MyProducts;
