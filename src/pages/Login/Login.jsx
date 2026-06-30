@@ -26,8 +26,23 @@ const Login = () => {
                 });
             })
             .then((res) => res.json())
-            .then((result) => {
-                console.log(result);
+            .then(() => {
+                return fetch("http://localhost:3000/jwt", {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: data.email,
+                    }),
+                });
+            })
+            .then((res) => res.json())
+            .then((token) => {
+                console.log(token);
+
+                localStorage.setItem("access-token", token.token);
+
                 alert("Login Successful");
                 navigate("/");
             })
@@ -39,19 +54,37 @@ const Login = () => {
     const handleGoogleSignIn = () => {
         googleSignIn()
             .then((result) => {
+                const loggedUser = result.user;
+
                 return fetch("http://localhost:3000/users", {
                     method: "PATCH",
                     headers: {
                         "content-type": "application/json",
                     },
                     body: JSON.stringify({
-                        email: result.user.email,
+                        email: loggedUser.email,
+                    }),
+                })
+                    .then((res) => res.json())
+                    .then(() => loggedUser);
+            })
+            .then((loggedUser) => {
+                return fetch("http://localhost:3000/jwt", {
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: loggedUser.email,
                     }),
                 });
             })
             .then((res) => res.json())
-            .then((result) => {
-                console.log(result);
+            .then((token) => {
+                console.log(token);
+
+                localStorage.setItem("access-token", token.token);
+
                 alert("Google Login Successful");
                 navigate("/");
             })
