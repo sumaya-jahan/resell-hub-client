@@ -1,9 +1,11 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import Home from "../pages/Home/Home";
+import AllProducts from "../pages/AllProducts/AllProducts";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import Dashboard from "../pages/Dashboard/Dashboard";
+import AddProduct from "../pages/AddProduct/AddProduct";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
 
@@ -15,6 +17,10 @@ const router = createBrowserRouter([
             {
                 index: true,
                 element: <Home />,
+            },
+            {
+                path: "products",
+                element: <AllProducts />,
             },
             {
                 path: "login",
@@ -36,17 +42,31 @@ const router = createBrowserRouter([
         children: [
             {
                 path: "userHome",
-                element: <h2 className="text-3xl font-bold">User Home</h2>,
+                element: (
+                    <h2 className="text-3xl font-bold">
+                        User Home
+                    </h2>
+                ),
             },
             {
                 path: "myProfile",
-                element: <h2 className="text-3xl font-bold">My Profile</h2>,
+                element: (
+                    <h2 className="text-3xl font-bold">
+                        My Profile
+                    </h2>
+                ),
+            },
+            {
+                path: "addProduct",
+                element: <AddProduct />,
             },
             {
                 path: "adminHome",
                 element: (
                     <AdminRoute>
-                        <h2 className="text-3xl font-bold">Admin Home</h2>
+                        <h2 className="text-3xl font-bold">
+                            Admin Home
+                        </h2>
                     </AdminRoute>
                 ),
             },
@@ -54,7 +74,9 @@ const router = createBrowserRouter([
                 path: "allUsers",
                 element: (
                     <AdminRoute>
-                        <h2 className="text-3xl font-bold">All Users</h2>
+                        <h2 className="text-3xl font-bold">
+                            All Users
+                        </h2>
                     </AdminRoute>
                 ),
             },
