@@ -9,6 +9,7 @@ import Dashboard from "../pages/Dashboard/Dashboard";
 import AddProduct from "../pages/AddProduct/AddProduct";
 import MyProducts from "../pages/MyProducts/MyProducts";
 import MyOrders from "../pages/MyOrders/MyOrders";
+import Wishlist from "../pages/Wishlist/Wishlist";
 import UpdateProduct from "../pages/UpdateProduct/UpdateProduct";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
             {
                 path: "myOrders",
                 element: <MyOrders />,
+            },
+            {
+                path: "wishlist",
+                element: <Wishlist />,
             },
             {
                 path: "updateProduct/:id",

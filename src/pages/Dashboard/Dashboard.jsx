@@ -76,6 +76,12 @@ const Dashboard = () => {
                                     My Orders
                                 </Link>
                             </li>
+
+                            <li>
+                                <Link to="/dashboard/wishlist">
+                                    Wishlist
+                                </Link>
+                            </li>
                         </>
                     )}
 
