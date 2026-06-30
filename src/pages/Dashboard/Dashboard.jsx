@@ -70,6 +70,12 @@ const Dashboard = () => {
                                     My Products
                                 </Link>
                             </li>
+
+                            <li>
+                                <Link to="/dashboard/myOrders">
+                                    My Orders
+                                </Link>
+                            </li>
                         </>
                     )}
 

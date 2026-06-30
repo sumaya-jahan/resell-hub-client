@@ -8,6 +8,7 @@ import Register from "../pages/Register/Register";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import AddProduct from "../pages/AddProduct/AddProduct";
 import MyProducts from "../pages/MyProducts/MyProducts";
+import MyOrders from "../pages/MyOrders/MyOrders";
 import UpdateProduct from "../pages/UpdateProduct/UpdateProduct";
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
@@ -70,6 +71,10 @@ const router = createBrowserRouter([
             {
                 path: "myProducts",
                 element: <MyProducts />,
+            },
+            {
+                path: "myOrders",
+                element: <MyOrders />,
             },
             {
                 path: "updateProduct/:id",
