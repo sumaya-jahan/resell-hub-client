@@ -27,6 +27,26 @@ const Register = () => {
         });
       })
       .then(() => {
+        const userInfo = {
+          name: data.name,
+          email: data.email,
+          photo: data.photo,
+          role: "user",
+          created_at: new Date(),
+          last_log_in: new Date(),
+        };
+
+        return fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        });
+      })
+      .then((res) => res.json())
+      .then((result) => {
+        console.log(result);
         alert("Registration Successful");
         navigate("/");
       })
@@ -37,6 +57,27 @@ const Register = () => {
 
   const handleGoogleSignIn = () => {
     googleSignIn()
+      .then((result) => {
+        const loggedUser = result.user;
+
+        const userInfo = {
+          name: loggedUser.displayName,
+          email: loggedUser.email,
+          photo: loggedUser.photoURL,
+          role: "user",
+          created_at: new Date(),
+          last_log_in: new Date(),
+        };
+
+        return fetch("http://localhost:3000/users", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(userInfo),
+        });
+      })
+      .then((res) => res.json())
       .then(() => {
         alert("Google Sign In Successful");
         navigate("/");
@@ -162,4 +203,3 @@ const Register = () => {
 };
 
 export default Register;
-
