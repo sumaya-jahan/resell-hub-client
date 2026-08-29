@@ -6,6 +6,7 @@ const Dashboard = () => {
 
     return (
         <div className="drawer lg:drawer-open">
+
             <input
                 id="my-drawer-2"
                 type="checkbox"
@@ -13,6 +14,7 @@ const Dashboard = () => {
             />
 
             <div className="drawer-content flex flex-col p-6">
+
                 <label
                     htmlFor="my-drawer-2"
                     className="btn btn-primary drawer-button lg:hidden mb-4"
@@ -21,17 +23,23 @@ const Dashboard = () => {
                 </label>
 
                 <Outlet />
+
             </div>
 
+
             <div className="drawer-side">
+
                 <label
                     htmlFor="my-drawer-2"
                     aria-label="close sidebar"
                     className="drawer-overlay"
                 ></label>
 
+
                 <ul className="menu bg-orange-200 text-base-content min-h-full w-80 p-4">
+
                     {isAdmin ? (
+
                         <>
                             <li>
                                 <Link to="/dashboard/adminHome">
@@ -44,8 +52,16 @@ const Dashboard = () => {
                                     All Users
                                 </Link>
                             </li>
+
+                            <li>
+                                <Link to="/dashboard/allProducts">
+                                    Manage Products
+                                </Link>
+                            </li>
                         </>
+
                     ) : (
+
                         <>
                             <li>
                                 <Link to="/dashboard/userHome">
@@ -72,6 +88,12 @@ const Dashboard = () => {
                             </li>
 
                             <li>
+                                <Link to="/dashboard/manageOrders">
+                                    Manage Orders
+                                </Link>
+                            </li>
+
+                            <li>
                                 <Link to="/dashboard/myOrders">
                                     My Orders
                                 </Link>
@@ -83,21 +105,30 @@ const Dashboard = () => {
                                 </Link>
                             </li>
                         </>
+
                     )}
+
 
                     <div className="divider"></div>
 
+
                     <li>
-                        <Link to="/">Home</Link>
+                        <Link to="/">
+                            Home
+                        </Link>
                     </li>
+
 
                     <li>
                         <Link to="/products">
                             All Products
                         </Link>
                     </li>
+
                 </ul>
+
             </div>
+
         </div>
     );
 };

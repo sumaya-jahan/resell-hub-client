@@ -17,18 +17,11 @@ const Login = () => {
     const onSubmit = (data) => {
         signIn(data.email, data.password)
             .then(() => {
-                return axiosSecure.patch("/users", {
-                    email: data.email,
-                });
-            })
-            .then(() => {
                 return axiosSecure.post("/jwt", {
                     email: data.email,
                 });
             })
             .then((res) => {
-                console.log(res.data);
-
                 localStorage.setItem(
                     "access-token",
                     res.data.token
@@ -47,20 +40,11 @@ const Login = () => {
             .then((result) => {
                 const loggedUser = result.user;
 
-                return axiosSecure
-                    .patch("/users", {
-                        email: loggedUser.email,
-                    })
-                    .then(() => loggedUser);
-            })
-            .then((loggedUser) => {
                 return axiosSecure.post("/jwt", {
                     email: loggedUser.email,
                 });
             })
             .then((res) => {
-                console.log(res.data);
-
                 localStorage.setItem(
                     "access-token",
                     res.data.token
@@ -77,11 +61,16 @@ const Login = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
+
                 <h2 className="text-3xl font-bold text-center mb-6">
                     Login
                 </h2>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="space-y-4"
+                >
+
                     <div>
                         <input
                             type="email"
@@ -91,12 +80,14 @@ const Login = () => {
                                 required: "Email is required",
                             })}
                         />
+
                         {errors.email && (
                             <p className="text-red-500 text-sm mt-1">
                                 {errors.email.message}
                             </p>
                         )}
                     </div>
+
 
                     <div>
                         <input
@@ -107,6 +98,7 @@ const Login = () => {
                                 required: "Password is required",
                             })}
                         />
+
                         {errors.password && (
                             <p className="text-red-500 text-sm mt-1">
                                 {errors.password.message}
@@ -114,13 +106,16 @@ const Login = () => {
                         )}
                     </div>
 
+
                     <button
                         type="submit"
                         className="btn btn-primary w-full"
                     >
                         Login
                     </button>
+
                 </form>
+
 
                 <button
                     type="button"
@@ -130,8 +125,10 @@ const Login = () => {
                     Continue with Google
                 </button>
 
+
                 <p className="text-center mt-5">
                     Don't have an account?{" "}
+
                     <Link
                         to="/register"
                         className="text-blue-600 font-semibold"
@@ -139,6 +136,7 @@ const Login = () => {
                         Register
                     </Link>
                 </p>
+
             </div>
         </div>
     );

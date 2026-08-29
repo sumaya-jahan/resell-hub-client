@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
 
 const AllProducts = () => {
+    const { user } = useAuth();
     const axiosSecure = useAxiosSecure();
 
     const [products, setProducts] = useState([]);
@@ -17,6 +19,32 @@ const AllProducts = () => {
                 console.log(error);
             });
     }, [axiosSecure]);
+
+    const handleWishlist = (product) => {
+        const wishlistItem = {
+            productId: product._id,
+            productTitle: product.title,
+            productImage: product.image,
+            price: product.price,
+            sellerName: product.sellerName,
+            sellerEmail: product.sellerEmail,
+            buyerName: user?.displayName,
+            buyerEmail: user?.email,
+        };
+
+        axiosSecure
+            .post("/wishlist", wishlistItem)
+            .then((res) => {
+                if (res.data.insertedId) {
+                    alert("Added to wishlist!");
+                } else {
+                    alert(res.data.message);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
 
     return (
         <div className="max-w-7xl mx-auto py-10 px-4">
@@ -68,10 +96,19 @@ const AllProducts = () => {
                                 {product.description}
                             </p>
 
-                            <div className="card-actions justify-end">
+                            <div className="grid grid-cols-2 gap-3 mt-4 w-full">
+                                <button
+                                    onClick={() =>
+                                        handleWishlist(product)
+                                    }
+                                    className="btn btn-secondary w-full"
+                                >
+                                    ❤️ Wishlist
+                                </button>
+
                                 <Link
                                     to={`/products/${product._id}`}
-                                    className="btn btn-primary"
+                                    className="btn btn-primary w-full"
                                 >
                                     View Details
                                 </Link>
