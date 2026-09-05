@@ -10,6 +10,7 @@ import About from "../pages/About/About";
 import Contact from "../pages/Contact/Contact";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
+import NotFound from "../pages/NotFound/NotFound";
 
 import Dashboard from "../pages/Dashboard/Dashboard";
 import AddProduct from "../pages/AddProduct/AddProduct";
@@ -99,7 +100,7 @@ const router = createBrowserRouter([
           <BuyerRoute>
             <MyOrders />
           </BuyerRoute>
-       ),
+        ),
       },
       {
         path: "wishlist",
@@ -107,7 +108,7 @@ const router = createBrowserRouter([
           <BuyerRoute>
             <Wishlist />
           </BuyerRoute>
-       ),
+        ),
       },
       {
         path: "addProduct",
@@ -115,7 +116,7 @@ const router = createBrowserRouter([
           <SellerRoute>
             <AddProduct />
           </SellerRoute>
-       ),
+        ),
       },
       {
         path: "myProducts",
@@ -123,7 +124,7 @@ const router = createBrowserRouter([
           <SellerRoute>
             <MyProducts />
           </SellerRoute>
-       ),
+        ),
       },
       {
         path: "updateProduct/:id",
@@ -139,7 +140,7 @@ const router = createBrowserRouter([
           <SellerRoute>
             <ManageOrders />
           </SellerRoute>
-       ),
+        ),
       },
       {
         path: "adminHome",
@@ -155,7 +156,7 @@ const router = createBrowserRouter([
           <AdminRoute>
             <AllUsers />
           </AdminRoute>
-       ),
+        ),
       },
       {
         path: "allProducts",
@@ -166,6 +167,10 @@ const router = createBrowserRouter([
         ),
       },
     ],
+  },
+  {
+    path: "*",
+    element: <NotFound />,
   },
 ]);
 
