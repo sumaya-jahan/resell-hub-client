@@ -1,4 +1,4 @@
-﻿import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -7,6 +7,7 @@ const Register = () => {
   const {
     createUser,
     updateUser,
+    googleSignIn,
     loading,
   } = useAuth();
 
@@ -16,6 +17,7 @@ const Register = () => {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -30,10 +32,7 @@ const Register = () => {
     }
 
     try {
-      await createUser(
-        data.email,
-        data.password
-      );
+      await createUser(data.email, data.password);
 
       await updateUser({
         displayName: data.name,
@@ -50,10 +49,7 @@ const Register = () => {
             : "buyer",
       };
 
-      await axiosSecure.post(
-        "/users",
-        userInfo
-      );
+      await axiosSecure.post("/users", userInfo);
 
       const jwtResponse =
         await axiosSecure.post("/jwt");
@@ -63,16 +59,34 @@ const Register = () => {
         jwtResponse.data.token
       );
 
-      alert(
-        "Registration Successful"
-      );
-
+      alert("Registration Successful");
       navigate("/");
     } catch (error) {
       alert(
         error?.response?.data?.message ||
           error?.message ||
           "Registration failed"
+      );
+    }
+  };
+
+  const handleGoogleRegister = async () => {
+    try {
+      const selectedRole =
+        getValues("role") === "seller"
+          ? "seller"
+          : "buyer";
+
+      localStorage.setItem(
+        "pending-google-role",
+        selectedRole
+      );
+
+      await googleSignIn();
+    } catch (error) {
+      alert(
+        error?.message ||
+          "Google registration failed"
       );
     }
   };
@@ -94,8 +108,7 @@ const Register = () => {
               placeholder="Name"
               className="input input-bordered w-full"
               {...register("name", {
-                required:
-                  "Name is required",
+                required: "Name is required",
               })}
             />
 
@@ -121,8 +134,7 @@ const Register = () => {
               placeholder="Email"
               className="input input-bordered w-full"
               {...register("email", {
-                required:
-                  "Email is required",
+                required: "Email is required",
               })}
             />
 
@@ -154,9 +166,7 @@ const Register = () => {
               placeholder="Password"
               className="input input-bordered w-full"
               {...register("password", {
-                required:
-                  "Password is required",
-
+                required: "Password is required",
                 minLength: {
                   value: 6,
                   message:
@@ -177,21 +187,15 @@ const Register = () => {
               type="password"
               placeholder="Confirm Password"
               className="input input-bordered w-full"
-              {...register(
-                "confirmPassword",
-                {
-                  required:
-                    "Confirm Password is required",
-                }
-              )}
+              {...register("confirmPassword", {
+                required:
+                  "Confirm Password is required",
+              })}
             />
 
             {errors.confirmPassword && (
               <p className="text-red-500 text-sm mt-1">
-                {
-                  errors.confirmPassword
-                    .message
-                }
+                {errors.confirmPassword.message}
               </p>
             )}
           </div>
@@ -206,6 +210,17 @@ const Register = () => {
               : "Register"}
           </button>
         </form>
+
+        <div className="divider">OR</div>
+
+        <button
+          type="button"
+          onClick={handleGoogleRegister}
+          disabled={loading}
+          className="btn btn-outline w-full"
+        >
+          Continue with Google
+        </button>
 
         <p className="text-center mt-5">
           Already have an account?{" "}
