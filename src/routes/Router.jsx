@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+﻿import { createBrowserRouter } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 
@@ -22,195 +22,154 @@ import ManageOrders from "../pages/Dashboard/ManageOrders";
 
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
-
+import SellerRoute from "./SellerRoute";
+import BuyerRoute from "./BuyerRoute";
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <MainLayout />,
 
-    // ================================
-    // PUBLIC ROUTES
-    // ================================
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
 
-    {
-        path: "/",
+      {
+        path: "products",
+        element: <AllProducts />,
+      },
 
-        element: <MainLayout />,
+      {
+        path: "products/:id",
+        element: <ProductDetails />,
+      },
 
-        children: [
+      {
+        path: "login",
+        element: <Login />,
+      },
 
-            {
-                index: true,
-                element: <Home />,
-            },
+      {
+        path: "register",
+        element: <Register />,
+      },
+    ],
+  },
 
-            {
-                path: "products",
-                element: <AllProducts />,
-            },
+  {
+    path: "/dashboard",
 
-            {
-                path: "products/:id",
-                element: <ProductDetails />,
-            },
+    element: (
+      <PrivateRoute>
+        <Dashboard />
+      </PrivateRoute>
+    ),
 
-            {
-                path: "login",
-                element: <Login />,
-            },
-
-            {
-                path: "register",
-                element: <Register />,
-            },
-
-        ],
-    },
-
-
-    // ================================
-    // DASHBOARD ROUTES
-    // ================================
-
-    {
-        path: "/dashboard",
-
+    children: [
+      {
+        path: "userHome",
         element: (
-            <PrivateRoute>
-                <Dashboard />
-            </PrivateRoute>
+          <BuyerRoute>
+            <h2 className="text-3xl font-bold">
+              Buyer Dashboard
+            </h2>
+          </BuyerRoute>
         ),
+      },
 
-        children: [
+      {
+        path: "myProfile",
+        element: (
+          <h2 className="text-3xl font-bold">
+            My Profile
+          </h2>
+        ),
+      },
 
-            // USER HOME
+      {
+        path: "myOrders",
+        element: (
+          <BuyerRoute>
+            <MyOrders />
+          </BuyerRoute>
+        ),
+      },
 
-            {
-                path: "userHome",
+      {
+        path: "wishlist",
+        element: (
+          <BuyerRoute>
+            <Wishlist />
+          </BuyerRoute>
+        ),
+      },
 
-                element: (
-                    <h2 className="text-3xl font-bold">
-                        User Home
-                    </h2>
-                ),
-            },
+      {
+        path: "addProduct",
+        element: (
+          <SellerRoute>
+            <AddProduct />
+          </SellerRoute>
+        ),
+      },
 
+      {
+        path: "myProducts",
+        element: (
+          <SellerRoute>
+            <MyProducts />
+          </SellerRoute>
+        ),
+      },
 
-            // MY PROFILE
+      {
+        path: "updateProduct/:id",
+        element: (
+          <SellerRoute>
+            <UpdateProduct />
+          </SellerRoute>
+        ),
+      },
 
-            {
-                path: "myProfile",
+      {
+        path: "manageOrders",
+        element: (
+          <SellerRoute>
+            <ManageOrders />
+          </SellerRoute>
+        ),
+      },
 
-                element: (
-                    <h2 className="text-3xl font-bold">
-                        My Profile
-                    </h2>
-                ),
-            },
+      {
+        path: "adminHome",
+        element: (
+          <AdminRoute>
+            <AdminHome />
+          </AdminRoute>
+        ),
+      },
 
+      {
+        path: "allUsers",
+        element: (
+          <AdminRoute>
+            <AllUsers />
+          </AdminRoute>
+        ),
+      },
 
-            // ADD PRODUCT
-
-            {
-                path: "addProduct",
-
-                element: <AddProduct />,
-            },
-
-
-            // MY PRODUCTS
-
-            {
-                path: "myProducts",
-
-                element: <MyProducts />,
-            },
-
-
-            // MY ORDERS
-
-            {
-                path: "myOrders",
-
-                element: <MyOrders />,
-            },
-
-
-            // WISHLIST
-
-            {
-                path: "wishlist",
-
-                element: <Wishlist />,
-            },
-
-
-            // UPDATE PRODUCT
-
-            {
-                path: "updateProduct/:id",
-
-                element: <UpdateProduct />,
-            },
-
-
-            // ================================
-            // SELLER - MANAGE ORDERS
-            // ================================
-
-            {
-                path: "manageOrders",
-
-                element: <ManageOrders />,
-            },
-
-
-            // ================================
-            // ADMIN HOME
-            // ================================
-
-            {
-                path: "adminHome",
-
-                element: (
-                    <AdminRoute>
-                        <AdminHome />
-                    </AdminRoute>
-                ),
-            },
-
-
-            // ================================
-            // ADMIN - ALL USERS
-            // ================================
-
-            {
-                path: "allUsers",
-
-                element: (
-                    <AdminRoute>
-                        <AllUsers />
-                    </AdminRoute>
-                ),
-            },
-
-
-            // ================================
-            // ADMIN - MANAGE PRODUCTS
-            // ================================
-
-            {
-                path: "allProducts",
-
-                element: (
-                    <AdminRoute>
-                        <AllProductsAdmin />
-                    </AdminRoute>
-                ),
-            },
-
-        ],
-    },
-
+      {
+        path: "allProducts",
+        element: (
+          <AdminRoute>
+            <AllProductsAdmin />
+          </AdminRoute>
+        ),
+      },
+    ],
+  },
 ]);
-
 
 export default router;
