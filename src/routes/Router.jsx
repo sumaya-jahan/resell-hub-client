@@ -23,6 +23,8 @@ import AdminHome from "../pages/Dashboard/AdminHome";
 import AllUsers from "../pages/Dashboard/AllUsers";
 import AllProductsAdmin from "../pages/Dashboard/AllProductsAdmin";
 import ManageOrders from "../pages/Dashboard/ManageOrders";
+import PaymentHistory from "../pages/Dashboard/PaymentHistory";
+import ProfileSettings from "../pages/Dashboard/ProfileSettings";
 
 import PrivateRoute from "./PrivateRoute";
 import AdminRoute from "./AdminRoute";
@@ -88,11 +90,7 @@ const router = createBrowserRouter([
       },
       {
         path: "myProfile",
-        element: (
-          <h2 className="text-3xl font-bold">
-            My Profile
-          </h2>
-        ),
+        element: <ProfileSettings />,
       },
       {
         path: "myOrders",
@@ -107,6 +105,14 @@ const router = createBrowserRouter([
         element: (
           <BuyerRoute>
             <Wishlist />
+          </BuyerRoute>
+        ),
+      },
+      {
+        path: "paymentHistory",
+        element: (
+          <BuyerRoute>
+            <PaymentHistory />
           </BuyerRoute>
         ),
       },

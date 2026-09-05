@@ -1,4 +1,4 @@
-﻿import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import useRole from "../../hooks/useRole";
 
 const Dashboard = () => {
@@ -128,6 +128,12 @@ const Dashboard = () => {
               <li>
                 <Link to="/dashboard/wishlist">
                   Wishlist
+                </Link>
+              </li>
+
+              <li>
+                <Link to="/dashboard/paymentHistory">
+                  Payment History
                 </Link>
               </li>
 
