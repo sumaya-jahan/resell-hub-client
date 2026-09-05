@@ -13,6 +13,7 @@
     "@tailwindcss/vite": "^4.3.2",
     "@tanstack/react-query": "^5.102.8",
     "axios": "^1.18.1",
+    "better-auth": "^1.7.2",
     "firebase": "^12.15.0",
     "framer-motion": "^12.42.0",
     "lottie-react": "^2.4.1",

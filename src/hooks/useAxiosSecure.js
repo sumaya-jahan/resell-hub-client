@@ -1,26 +1,33 @@
-import axios from "axios";
+﻿import axios from "axios";
 
 const axiosSecure = axios.create({
-    baseURL: "http://localhost:3000",
+  baseURL:
+    import.meta.env.VITE_API_URL ||
+    "http://localhost:3000",
+
+  withCredentials: true,
 });
 
 axiosSecure.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("access-token");
+  (config) => {
+    const token =
+      localStorage.getItem("access-token");
 
-        if (token) {
-            config.headers.authorization = `Bearer ${token}`;
-        }
-
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
+    if (token) {
+      config.headers.authorization =
+        `Bearer ${token}`;
     }
+
+    return config;
+  },
+
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 const useAxiosSecure = () => {
-    return axiosSecure;
+  return axiosSecure;
 };
 
 export default useAxiosSecure;

@@ -1,218 +1,224 @@
-import { useForm } from "react-hook-form";
+﻿import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const Register = () => {
-    const { createUser, updateUser, googleSignIn } = useAuth();
-    const navigate = useNavigate();
-    const axiosSecure = useAxiosSecure();
+  const {
+    createUser,
+    updateUser,
+    loading,
+  } = useAuth();
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = useForm();
+  const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
 
-    const onSubmit = (data) => {
-        if (data.password !== data.confirmPassword) {
-            alert("Passwords do not match");
-            return;
-        }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      role: "buyer",
+    },
+  });
 
-        createUser(data.email, data.password)
-            .then(() => {
-                return updateUser({
-                    displayName: data.name,
-                    photoURL: data.photo,
-                });
-            })
-            .then(() => {
-                const userInfo = {
-                    name: data.name,
-                    email: data.email,
-                    photo: data.photo,
-                    role: "user",
-                    created_at: new Date(),
-                    last_log_in: new Date(),
-                };
+  const onSubmit = async (data) => {
+    if (data.password !== data.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
 
-                return axiosSecure.post("/users", userInfo);
-            })
-            .then(() => {
-                return axiosSecure.post("/jwt", {
-                    email: data.email,
-                });
-            })
-            .then((res) => {
-                console.log(res.data);
+    try {
+      await createUser(
+        data.email,
+        data.password
+      );
 
-                localStorage.setItem(
-                    "access-token",
-                    res.data.token
-                );
+      await updateUser({
+        displayName: data.name,
+        photoURL: data.photo || "",
+      });
 
-                alert("Registration Successful");
-                navigate("/");
-            })
-            .catch((error) => {
-                alert(error.message);
-            });
+      const userInfo = {
+        name: data.name,
+        email: data.email,
+        photo: data.photo || "",
+        role:
+          data.role === "seller"
+            ? "seller"
+            : "buyer",
+      };
 
-    };
+      await axiosSecure.post(
+        "/users",
+        userInfo
+      );
 
-    const handleGoogleSignIn = () => {
-        googleSignIn()
-            .then((result) => {
-                const loggedUser = result.user;
+      const jwtResponse =
+        await axiosSecure.post("/jwt");
 
-                const userInfo = {
-                    name: loggedUser.displayName,
-                    email: loggedUser.email,
-                    photo: loggedUser.photoURL,
-                    role: "user",
-                    created_at: new Date(),
-                    last_log_in: new Date(),
-                };
+      localStorage.setItem(
+        "access-token",
+        jwtResponse.data.token
+      );
 
-                return axiosSecure
-                    .post("/users", userInfo)
-                    .then(() => loggedUser);
-            })
-            .then((loggedUser) => {
-                return axiosSecure.post("/jwt", {
-                    email: loggedUser.email,
-                });
-            })
-            .then((res) => {
-                console.log(res.data);
+      alert(
+        "Registration Successful"
+      );
 
-                localStorage.setItem(
-                    "access-token",
-                    res.data.token
-                );
+      navigate("/");
+    } catch (error) {
+      alert(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Registration failed"
+      );
+    }
+  };
 
-                alert("Google Sign In Successful");
-                navigate("/");
-            })
-            .catch((error) => {
-                alert(error.message);
-            });
-    };
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
-                <h2 className="text-3xl font-bold text-center mb-6">
-                    Register
-                </h2>
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-10">
+      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
+        <h2 className="text-3xl font-bold text-center mb-6">
+          Register
+        </h2>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            className="input input-bordered w-full"
-                            {...register("name", {
-                                required: "Name is required",
-                            })}
-                        />
-                        {errors.name && (
-                            <p className="text-red-500 text-sm mt-1">
-                                {errors.name.message}
-                            </p>
-                        )}
-                    </div>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="space-y-4"
+        >
+          <div>
+            <input
+              type="text"
+              placeholder="Name"
+              className="input input-bordered w-full"
+              {...register("name", {
+                required:
+                  "Name is required",
+              })}
+            />
 
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Photo URL"
-                            className="input input-bordered w-full"
-                            {...register("photo")}
-                        />
-                    </div>
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.name.message}
+              </p>
+            )}
+          </div>
 
-                    <div>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            className="input input-bordered w-full"
-                            {...register("email", {
-                                required: "Email is required",
-                            })}
-                        />
-                        {errors.email && (
-                            <p className="text-red-500 text-sm mt-1">
-                                {errors.email.message}
-                            </p>
-                        )}
-                    </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Photo URL"
+              className="input input-bordered w-full"
+              {...register("photo")}
+            />
+          </div>
 
-                    <div>
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            className="input input-bordered w-full"
-                            {...register("password", {
-                                required: "Password is required",
-                                minLength: {
-                                    value: 6,
-                                    message:
-                                        "Password must be at least 6 characters",
-                                },
-                            })}
-                        />
-                        {errors.password && (
-                            <p className="text-red-500 text-sm mt-1">
-                                {errors.password.message}
-                            </p>
-                        )}
-                    </div>
+          <div>
+            <input
+              type="email"
+              placeholder="Email"
+              className="input input-bordered w-full"
+              {...register("email", {
+                required:
+                  "Email is required",
+              })}
+            />
 
-                    <div>
-                        <input
-                            type="password"
-                            placeholder="Confirm Password"
-                            className="input input-bordered w-full"
-                            {...register("confirmPassword", {
-                                required: "Confirm Password is required",
-                            })}
-                        />
-                        {errors.confirmPassword && (
-                            <p className="text-red-500 text-sm mt-1">
-                                {errors.confirmPassword.message}
-                            </p>
-                        )}
-                    </div>
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.email.message}
+              </p>
+            )}
+          </div>
 
-                    <button
-                        type="submit"
-                        className="btn btn-primary w-full"
-                    >
-                        Register
-                    </button>
-                </form>
+          <div>
+            <select
+              className="select select-bordered w-full"
+              {...register("role")}
+            >
+              <option value="buyer">
+                Buyer
+              </option>
 
-                <button
-                    type="button"
-                    onClick={handleGoogleSignIn}
-                    className="btn btn-outline w-full mt-4"
-                >
-                    Continue with Google
-                </button>
+              <option value="seller">
+                Seller
+              </option>
+            </select>
+          </div>
 
-                <p className="text-center mt-5">
-                    Already have an account?{" "}
-                    <Link
-                        to="/login"
-                        className="text-blue-600 font-semibold"
-                    >
-                        Login
-                    </Link>
-                </p>
-            </div>
-        </div>
-    );
+          <div>
+            <input
+              type="password"
+              placeholder="Password"
+              className="input input-bordered w-full"
+              {...register("password", {
+                required:
+                  "Password is required",
+
+                minLength: {
+                  value: 6,
+                  message:
+                    "Password must be at least 6 characters",
+                },
+              })}
+            />
+
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <input
+              type="password"
+              placeholder="Confirm Password"
+              className="input input-bordered w-full"
+              {...register(
+                "confirmPassword",
+                {
+                  required:
+                    "Confirm Password is required",
+                }
+              )}
+            />
+
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {
+                  errors.confirmPassword
+                    .message
+                }
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn btn-primary w-full"
+          >
+            {loading
+              ? "Registering..."
+              : "Register"}
+          </button>
+        </form>
+
+        <p className="text-center mt-5">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="text-blue-600 font-semibold"
+          >
+            Login
+          </Link>
+        </p>
+      </div>
+    </div>
+  );
 };
 
 export default Register;

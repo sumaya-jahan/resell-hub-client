@@ -1,66 +1,154 @@
-
-import {
-  createContext,
-  useEffect,
-  useState,
-} from "react";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-  updateProfile,
-} from "firebase/auth";
-import app from "../firebase/firebase.config";
+﻿import { createContext, useState } from "react";
+import { authClient } from "../lib/auth-client";
 
 export const AuthContext = createContext(null);
 
-const auth = getAuth(app);
-const googleProvider = new GoogleAuthProvider();
-
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data: session, isPending } = authClient.useSession();
+  const [actionLoading, setActionLoading] = useState(false);
 
-  const createUser = (email, password) => {
-    setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+  const formatUser = (authUser) => {
+    if (!authUser) return null;
+
+    return {
+      ...authUser,
+      uid: authUser.id,
+      displayName: authUser.name || "",
+      photoURL: authUser.image || "",
+    };
   };
 
-  const signIn = (email, password) => {
-    setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
+  const user = formatUser(session?.user);
+
+  const createUser = async (email, password) => {
+    setActionLoading(true);
+
+    try {
+      const result = await authClient.signUp.email({
+        email,
+        password,
+        name: email.split("@")[0] || "ReSell Hub User",
+      });
+
+      if (result.error) {
+        throw new Error(
+          result.error.message || "Registration failed"
+        );
+      }
+
+      return {
+        ...result.data,
+        user: formatUser(result.data?.user),
+      };
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const googleSignIn = () => {
-    setLoading(true);
-    return signInWithPopup(auth, googleProvider);
+  const signIn = async (email, password) => {
+    setActionLoading(true);
+
+    try {
+      const result = await authClient.signIn.email({
+        email,
+        password,
+      });
+
+      if (result.error) {
+        throw new Error(
+          result.error.message || "Login failed"
+        );
+      }
+
+      return {
+        ...result.data,
+        user: formatUser(result.data?.user),
+      };
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const logOut = () => {
-    setLoading(true);
-    return signOut(auth);
+  const googleSignIn = async () => {
+    setActionLoading(true);
+
+    try {
+      const result = await authClient.signIn.social({
+        provider: "google",
+        callbackURL: window.location.origin,
+      });
+
+      if (result.error) {
+        throw new Error(
+          result.error.message || "Google sign in failed"
+        );
+      }
+
+      return result.data;
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  const updateUser = (userInfo) => {
-    return updateProfile(auth.currentUser, userInfo);
+  const logOut = async () => {
+    setActionLoading(true);
+
+    try {
+      const result = await authClient.signOut();
+
+      if (result.error) {
+        throw new Error(
+          result.error.message || "Logout failed"
+        );
+      }
+
+      localStorage.removeItem("access-token");
+
+      return result.data;
+    } finally {
+      setActionLoading(false);
+    }
   };
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      setLoading(false);
-    });
+  const updateUser = async (userInfo) => {
+    setActionLoading(true);
 
-    return () => unsubscribe();
-  }, []);
+    try {
+      const updateData = {};
+
+      if (userInfo?.displayName !== undefined) {
+        updateData.name = userInfo.displayName;
+      }
+
+      if (userInfo?.photoURL !== undefined) {
+        updateData.image = userInfo.photoURL;
+      }
+
+      if (userInfo?.name !== undefined) {
+        updateData.name = userInfo.name;
+      }
+
+      if (userInfo?.image !== undefined) {
+        updateData.image = userInfo.image;
+      }
+
+      const result = await authClient.updateUser(updateData);
+
+      if (result.error) {
+        throw new Error(
+          result.error.message || "Profile update failed"
+        );
+      }
+
+      return result.data;
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   const authInfo = {
     user,
-    loading,
+    loading: isPending || actionLoading,
     createUser,
     signIn,
     googleSignIn,
