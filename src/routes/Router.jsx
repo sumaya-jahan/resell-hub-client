@@ -1,10 +1,13 @@
-﻿import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 
 import Home from "../pages/Home/Home";
 import AllProducts from "../pages/AllProducts/AllProducts";
 import ProductDetails from "../pages/ProductDetails/ProductDetails";
+import Categories from "../pages/Categories/Categories";
+import About from "../pages/About/About";
+import Contact from "../pages/Contact/Contact";
 import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 
@@ -29,44 +32,48 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
-
     children: [
       {
         index: true,
         element: <Home />,
       },
-
       {
         path: "products",
         element: <AllProducts />,
       },
-
       {
         path: "products/:id",
         element: <ProductDetails />,
       },
-
+      {
+        path: "categories",
+        element: <Categories />,
+      },
+      {
+        path: "about",
+        element: <About />,
+      },
+      {
+        path: "contact",
+        element: <Contact />,
+      },
       {
         path: "login",
         element: <Login />,
       },
-
       {
         path: "register",
         element: <Register />,
       },
     ],
   },
-
   {
     path: "/dashboard",
-
     element: (
       <PrivateRoute>
         <Dashboard />
       </PrivateRoute>
     ),
-
     children: [
       {
         path: "userHome",
@@ -78,7 +85,6 @@ const router = createBrowserRouter([
           </BuyerRoute>
         ),
       },
-
       {
         path: "myProfile",
         element: (
@@ -87,43 +93,38 @@ const router = createBrowserRouter([
           </h2>
         ),
       },
-
       {
         path: "myOrders",
         element: (
           <BuyerRoute>
             <MyOrders />
           </BuyerRoute>
-        ),
+       ),
       },
-
       {
         path: "wishlist",
         element: (
           <BuyerRoute>
             <Wishlist />
           </BuyerRoute>
-        ),
+       ),
       },
-
       {
         path: "addProduct",
         element: (
           <SellerRoute>
             <AddProduct />
           </SellerRoute>
-        ),
+       ),
       },
-
       {
         path: "myProducts",
         element: (
           <SellerRoute>
             <MyProducts />
           </SellerRoute>
-        ),
+       ),
       },
-
       {
         path: "updateProduct/:id",
         element: (
@@ -132,16 +133,14 @@ const router = createBrowserRouter([
           </SellerRoute>
         ),
       },
-
       {
         path: "manageOrders",
         element: (
           <SellerRoute>
             <ManageOrders />
           </SellerRoute>
-        ),
+       ),
       },
-
       {
         path: "adminHome",
         element: (
@@ -150,16 +149,14 @@ const router = createBrowserRouter([
           </AdminRoute>
         ),
       },
-
       {
         path: "allUsers",
         element: (
           <AdminRoute>
             <AllUsers />
           </AdminRoute>
-        ),
+       ),
       },
-
       {
         path: "allProducts",
         element: (
